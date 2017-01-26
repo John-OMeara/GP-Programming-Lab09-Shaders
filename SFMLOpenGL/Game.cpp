@@ -1,5 +1,6 @@
 #include <Game.h>
 
+
 static bool flip;
 
 Game::Game() : window(VideoMode(800, 600), "OpenGL Cube Vertex and Fragment Shaders")
@@ -62,39 +63,85 @@ void Game::initialize()
 
 	glewInit();
 
+	// File Loading
+	std::ifstream vertexText;
+	std::ifstream fragmentText;
+	vertexText.open("../Files/vertexShader.txt");
+	fragmentText.open("../Files/fragmentShader.txt");
+	std::stringstream vertexStream;
+	std::stringstream fragmentStream;
+	vertexStream << vertexText.rdbuf();
+	fragmentStream << fragmentText.rdbuf();
+	std::string vertexString = vertexStream.str();
+	std::string fragmentString = fragmentStream.str();
+	const char * vertexSource = vertexString.c_str();
+	const char * fragmentSource = fragmentString.c_str();
+
 	/* Vertices counter-clockwise winding */
 	//
+	//vertex[0].coordinate[0] = -0.5f;
+	//vertex[0].coordinate[1] = -0.5f;
+	//vertex[0].coordinate[2] = 0.0f;
+	//
+	//vertex[1].coordinate[0] = 0.5f;
+	//vertex[1].coordinate[1] = -0.5f;
+	//vertex[1].coordinate[2] = 0.0f;
+	//
+	//vertex[2].coordinate[0] = 0.5f;
+	//vertex[2].coordinate[1] = 0.5f;
+	//vertex[2].coordinate[2] = 0.0f;
+	//
+	//vertex[3].coordinate[0] = -0.5f;
+	//vertex[3].coordinate[1] = 0.5f;
+	//vertex[3].coordinate[2] = 0.0f;
+	//
+	//vertex[4].coordinate[0] = -0.5f;
+	//vertex[4].coordinate[1] = -0.5f;
+	//vertex[4].coordinate[2] = -0.0f;
+	//
+	//vertex[5].coordinate[0] = 0.5f;
+	//vertex[5].coordinate[1] = -0.5f;
+	//vertex[5].coordinate[2] = -0.0f;
+	//
+	//vertex[6].coordinate[0] = 0.5f;
+	//vertex[6].coordinate[1] = 0.5f;
+	//vertex[6].coordinate[2] = -0.0f;
+	//
+	//vertex[7].coordinate[0] = -0.5f;
+	//vertex[7].coordinate[1] = 0.5f;
+	//vertex[7].coordinate[2] = -0.0f;
+
 	vertex[0].coordinate[0] = -0.5f;
 	vertex[0].coordinate[1] = -0.5f;
 	vertex[0].coordinate[2] = 0.0f;
 
-	vertex[1].coordinate[0] = 0.5f;
-	vertex[1].coordinate[1] = -0.5f;
+	vertex[1].coordinate[0] = -0.5f;
+	vertex[1].coordinate[1] = 0.5f;
 	vertex[1].coordinate[2] = 0.0f;
 
 	vertex[2].coordinate[0] = 0.5f;
 	vertex[2].coordinate[1] = 0.5f;
 	vertex[2].coordinate[2] = 0.0f;
 
-	vertex[3].coordinate[0] = -0.5f;
-	vertex[3].coordinate[1] = 0.5f;
+	vertex[3].coordinate[0] = 0.5f;
+	vertex[3].coordinate[1] = -0.5f;
 	vertex[3].coordinate[2] = 0.0f;
 
 	vertex[4].coordinate[0] = -0.5f;
 	vertex[4].coordinate[1] = -0.5f;
-	vertex[4].coordinate[2] = -0.0f;
+	vertex[4].coordinate[2] = -1.0f;
 
-	vertex[5].coordinate[0] = 0.5f;
-	vertex[5].coordinate[1] = -0.5f;
-	vertex[5].coordinate[2] = -0.0f;
+	vertex[5].coordinate[0] = -0.5f;
+	vertex[5].coordinate[1] = 0.5f;
+	vertex[5].coordinate[2] = -1.0f;
 
 	vertex[6].coordinate[0] = 0.5f;
 	vertex[6].coordinate[1] = 0.5f;
-	vertex[6].coordinate[2] = -0.0f;
+	vertex[6].coordinate[2] = -1.0f;
 
-	vertex[7].coordinate[0] = -0.5f;
-	vertex[7].coordinate[1] = 0.5f;
-	vertex[7].coordinate[2] = -0.0f;
+	vertex[7].coordinate[0] = 0.5f;
+	vertex[7].coordinate[1] = -0.5f;
+	vertex[7].coordinate[2] = -1.0f;
 
 	//vertex[0].color[0] = 0.0f;
 	//vertex[0].color[1] = 0.0f;
@@ -113,30 +160,31 @@ void Game::initialize()
 
 	/*Index of Poly / Triangle to Draw */
 
-	// Front
-	triangles[0] = 0;   triangles[1] = 1;   triangles[2] = 2;
-	triangles[3] = 2;   triangles[4] = 3;   triangles[5] = 0;
+	// FRONT
+	triangles[0] = 2;   triangles[1] = 1;   triangles[2] = 0;
+	triangles[3] = 2;   triangles[4] = 0;   triangles[5] = 3;
 
-	// Top
-	triangles[6] = 6;   triangles[7] = 7;   triangles[8] = 3;
-	triangles[9] = 3;   triangles[10] = 2;   triangles[11] = 6;
+	// BACK
+	triangles[6] = 5;   triangles[7] = 6;   triangles[8] = 7;
+	triangles[9] = 5;   triangles[10] = 7;   triangles[11] = 4;
 
-	// Bot
-	triangles[12] = 4;   triangles[13] = 5;   triangles[14] = 1;
-	triangles[15] = 1;   triangles[16] = 0;   triangles[17] = 4;
+	// LEFT
+	triangles[12] = 1;   triangles[13] = 5;   triangles[14] = 4;
+	triangles[15] = 1;   triangles[16] = 4;   triangles[17] = 0;
 
-	// Left
-	triangles[18] = 3;   triangles[19] = 0;   triangles[20] = 4;
-	triangles[21] = 7;   triangles[22] = 7;   triangles[23] = 3;
+	// RIGHT
+	triangles[18] = 6;   triangles[19] = 2;   triangles[20] = 3;
+	triangles[21] = 6;   triangles[22] = 3;   triangles[23] = 7;
 
-	// Right
-	triangles[24] = 1;   triangles[25] = 2;   triangles[26] = 6;
-	triangles[27] = 6;   triangles[28] = 5;   triangles[29] = 1;
+	// TOP
+	triangles[24] = 6;   triangles[25] = 5;   triangles[26] = 1;
+	triangles[27] = 6;   triangles[28] = 1;   triangles[29] = 2;
 
-	// Back
-	triangles[30] = 6;   triangles[31] = 5;   triangles[32] = 4;
-	triangles[33] = 4;   triangles[34] = 7;   triangles[35] = 6;
+	// BOT
+	triangles[30] = 3;   triangles[31] = 0;   triangles[32] = 4;
+	triangles[33] = 3;   triangles[34] = 4;   triangles[35] = 7;
 
+	glEnable(GL_CULL_FACE);
 
 	/* Create a new VBO using VBO id */
 	glGenBuffers(1, vbo);
@@ -154,14 +202,16 @@ void Game::initialize()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 	/* Vertex Shader which would normally be loaded from an external file */
-	const char* vs_src = "#version 400\n\r"
-		"in vec4 sv_position;"
-		"in vec4 sv_color;"
-		"out vec4 color;"
-		"void main() {"
-		"	color = sv_color;"
-		"	gl_Position = sv_position;"
-		"}"; //Vertex Shader Src
+	//const char* vs_src = "#version 400\n\r"
+	//	"in vec4 sv_position;"
+	//	"in vec4 sv_color;"
+	//	"out vec4 color;"
+	//	"void main() {"
+	//	"	color = sv_color;"
+	//	"	gl_Position = sv_position;"
+	//	"}"; //Vertex Shader Src
+	const char* vs_src = vertexSource;
+	std::cout << vs_src << std::endl;
 
 	DEBUG_MSG("Setting Up Vertex Shader");
 
@@ -181,13 +231,18 @@ void Game::initialize()
 		DEBUG_MSG("ERROR: Vertex Shader Compilation Error");
 	}
 
+
+
+
 	/* Fragment Shader which would normally be loaded from an external file */
-	const char* fs_src = "#version 400\n\r"
-		"in vec4 color;"
-		"out vec4 fColor;"
-		"void main() {"
-		"	fColor = vec4(0.0f, 1.0f, 0.0f, 1.0f);"
-		"}"; //Fragment Shader Src
+	//const char* fs_src = "#version 400\n\r"
+	//	"in vec4 color;"
+	//	"out vec4 fColor;"
+	//	"void main() {"
+	//	"	fColor = vec4(0.0f, 1.0f, 0.0f, 1.0f);"
+	//	"}"; //Fragment Shader Src
+	const char* fs_src = fragmentSource;
+	std::cout << fs_src << std::endl;
 
 	DEBUG_MSG("Setting Up Fragment Shader");
 
@@ -271,26 +326,26 @@ void Game::update()
 	vertex[2].coordinate[0] += -0.0001f;
 	vertex[2].coordinate[1] += -0.0001f;
 	vertex[2].coordinate[2] += -0.0001f;
-
+	
 	vertex[3].coordinate[0] += -0.0001f;
 	vertex[3].coordinate[1] += -0.0001f;
 	vertex[3].coordinate[2] += -0.0001f;
-
-	vertex[4].coordinate[0] += -0.0001f;
-	vertex[4].coordinate[1] += -0.0001f;
-	vertex[4].coordinate[2] += -0.0001f;
-
-	vertex[5].coordinate[0] += -0.0001f;
-	vertex[5].coordinate[1] += -0.0001f;
-	vertex[5].coordinate[2] += -0.0001f;
-
-	vertex[6].coordinate[0] += -0.0001f;
-	vertex[6].coordinate[1] += -0.0001f;
-	vertex[6].coordinate[2] += -0.0001f;
-
-	vertex[7].coordinate[0] += -0.0001f;
-	vertex[7].coordinate[1] += -0.0001f;
-	vertex[7].coordinate[2] += -0.0001f;
+	
+	//vertex[4].coordinate[0] += -0.0001f;
+	//vertex[4].coordinate[1] += -0.0001f;
+	//vertex[4].coordinate[2] += -0.0001f;
+	//
+	//vertex[5].coordinate[0] += -0.0001f;
+	//vertex[5].coordinate[1] += -0.0001f;
+	//vertex[5].coordinate[2] += -0.0001f;
+	//
+	//vertex[6].coordinate[0] += -0.0001f;
+	//vertex[6].coordinate[1] += -0.0001f;
+	//vertex[6].coordinate[2] += -0.0001f;
+	//
+	//vertex[7].coordinate[0] += -0.0001f;
+	//vertex[7].coordinate[1] += -0.0001f;
+	//vertex[7].coordinate[2] += -0.0001f;
 
 #if (DEBUG >= 2)
 	DEBUG_MSG("Update up...");
